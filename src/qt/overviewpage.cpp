@@ -175,7 +175,7 @@ void OverviewPage::setModel(WalletModel *model)
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
     }
 
-    // update the display unit, to not use the default ("WDC")
+    // update the display unit, to not use the default ("42")
     updateDisplayUnit();
 }
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2012 Litecoin Developers
-// Copyright (c) 2013 Worldcoin Developers
+// Copyright (c) 2013 42 Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,8 +33,8 @@ unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
 
-uint256 hashGenesisBlock("0x7231b064d3e620c55960abce2963ea19e1c3ffb6f5ff70e975114835a7024107");
-static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Worldcoin: starting difficulty is 1 / 2^12
+uint256 hashGenesisBlock("0x38071cd415decbe206c9cce527b2b1f90791cf6ab4df0c0c13665931b9a6ae1d");
+static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // 42: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
 CBigNum bnBestChainWork = 0;
@@ -54,14 +54,14 @@ map<uint256, map<uint256, CDataStream*> > mapOrphanTransactionsByPrev;
 // Constant stuff for coinbase transactions we create:
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "Worldcoin Signed Message:\n";
+const string strMessageMagic = "42 Signed Message:\n";
 
 double dHashesPerSec;
 int64 nHPSTimerStart;
 
 // Settings
-int64 nTransactionFee = 0;
-int64 nMinimumInputValue = CENT / 100;
+int64 nTransactionFee = 1;
+int64 nMinimumInputValue = CENT / 1000000;
 
 
 
@@ -831,48 +831,46 @@ uint256 static GetOrphanRoot(const CBlock* pblock)
 }
 
 static const int64 nDiffChangeTarget = 600000;
-static const int64 patchBlockRewardDuration = 20160;
 
-int64 GetWDCSubsidy(int nHeight) {
-	// thanks to RealSolid for helping out with this code
-	int64 qSubsidy = 64*COIN;
-	int blocks = nHeight - nDiffChangeTarget;
-	int weeks = (blocks / patchBlockRewardDuration)+1;
-	//for each week that has passed, decrease reward by 1%
-	for(int i = 0; i < weeks; i++)  qSubsidy -= (qSubsidy/100);  
-	return qSubsidy;
-
+int64 static GetBlockValue(int nHeight, int64 nFees)
+{
+    int64 nSubsidy = 0.000042 * COIN;
+    if(nHeight < 419)
+    {
+       nSubsidy = 0.0000001 * COIN;
+	}
+    if(nHeight == 1)
+    {
+       nSubsidy = 0.42 * COIN;
+	}
+    if(nHeight == 420) // yay its 420 :) Time for a smoke
+    {
+       nSubsidy = 0.00042 * COIN;
+	}
+    if(nHeight == 4242)
+    {
+       nSubsidy = 0.00042 * COIN;
+	}
+    if(nHeight == 42424)
+    {
+       nSubsidy = 0.00042 * COIN;
+	}
+    if(nHeight == 424242)
+    {
+       nSubsidy = 0.00042 * COIN;
+	}
+    if(nHeight == 4242424)
+    {
+       nSubsidy = 0.00042 * COIN;
+	}
+    return nSubsidy + nFees;
 }
 
-
-int64 static GetBlockValue(int nHeight, int64 nFees) {
-	int64 nSubsidy = COIN;
-
-	if(nHeight < nDiffChangeTarget) {
-		//this is pre-patch, reward is 32.
-		nSubsidy = 32 * COIN;
-	} else {
-		//patch takes effect after 600,000 blocks solved
-		nSubsidy = GetWDCSubsidy(nHeight);
-	}
-
-	//make sure the reward is at least 1 WDC
-	if(nSubsidy < COIN) {
-		nSubsidy = COIN;
-	}
-
-	return nSubsidy + nFees;
-}
-
-
-
-
-
-static const int64 nTargetTimespan = 0.35 *24 * 60 * 60;	// Worldcoin: 0.35 day
-static const int64 nTargetSpacing = 15;						// Worldcoin: 15 sec
+static const int64 nTargetTimespan = 294;	// 42: 7 minutes
+static const int64 nTargetSpacing = 42;						// 42: 42 sec
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
-static const int64 nTargetTimespanRe = 60 * 60; // 60 Minutes
-static const int64 nTargetSpacingRe = 1 * 30; // Worldcoin: 30 seconds
+static const int64 nTargetTimespanRe = 588; // 14 Minutes
+static const int64 nTargetSpacingRe = 42; // 42: 42 seconds
 static const int64 nIntervalRe = nTargetTimespanRe / nTargetSpacingRe;
 
 
@@ -952,7 +950,7 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
       return pindexLast->nBits;
     }
     
-    // Worldcoin: This fixes an issue where a 51% attack can change difficulty at will.
+    // 42: This fixes an issue where a 51% attack can change difficulty at will.
     // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
     blockstogoback = retargetInterval-1;
     if ((pindexLast->nHeight+1) != retargetInterval) blockstogoback = retargetInterval;
@@ -1234,7 +1232,7 @@ bool CTransaction::ConnectInputs(MapPrevTx inputs,
 {
     // Take over previous transactions' spent pointers
     // fBlock is true when this is called from AcceptBlock when a new best-block is added to the blockchain
-    // fMiner is true when called from the internal worldcoin miner
+    // fMiner is true when called from the internal 42 miner
     // ... both are false when called from CTransaction::AcceptToMemoryPool
     if (!IsCoinBase())
     {
@@ -1981,7 +1979,7 @@ bool CheckDiskSpace(uint64 nAdditionalBytes)
         string strMessage = _("Warning: Disk space is low");
         strMiscWarning = strMessage;
         printf("*** %s\n", strMessage.c_str());
-        uiInterface.ThreadSafeMessageBox(strMessage, "Worldcoin", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
+        uiInterface.ThreadSafeMessageBox(strMessage, "42", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
         StartShutdown();
         return false;
     }
@@ -2037,7 +2035,7 @@ bool LoadBlockIndex(bool fAllowNew)
         pchMessageStart[1] = 0xc1;
         pchMessageStart[2] = 0xb7;
         pchMessageStart[3] = 0xdc;
-        hashGenesisBlock = uint256("0xb768001ec9143087a914202af339bd7417b6bc83cf7c5f3f8a2fca405d038c15");
+        hashGenesisBlock = uint256("0x2ab4aaf9a0c6a2aa540c04115fe5c6ab16d0056c0d93e643f4cb8e9923c0da60");
     }
 
     //
@@ -2068,7 +2066,7 @@ bool LoadBlockIndex(bool fAllowNew)
 		//   vMerkleTree: 4fe8c1ba0a
 
         // Genesis block
-        const char* pszTimestamp = "May 13, 2013 11:34pm EDT: U.S. crude futures were up 0.3 percent at $95.41 a barrel";
+        const char* pszTimestamp = "Freeze brings rare danger warning ";
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
@@ -2080,21 +2078,21 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1368503907;
+        block.nTime    = 1389070189;
         block.nBits    = 0x1e0ffff0;
-        block.nNonce   = 102158625;
+        block.nNonce   = 2145330;
 
         if (fTestNet)
         {
-            block.nTime    = 1362718146;
-            block.nNonce   = 100784949;
+            block.nTime    = 1389062691;
+            block.nNonce   = 495572;
         }
 
         //// debug print
         printf("block.GetHash() = %s\n", block.GetHash().ToString().c_str());
         printf("hashGenesisBlock = %s\n", hashGenesisBlock.ToString().c_str());
         printf("block.hashMerkleRoot = %s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0x4fe8c1ba0a102fea0643287bb22ce7469ecb9b690362013f269a423fefa77b6e"));
+        assert(block.hashMerkleRoot == uint256("0xfe950e7120cf59dfe372f959e6811b570c5146ce6ab0463367a85bb39e551843"));
 
         // If genesis block hash does not match, then generate new genesis hash.
         if (false && block.GetHash() != hashGenesisBlock)
@@ -2351,7 +2349,7 @@ CAlert CAlert::getAlertByHash(const uint256 &hash)
 bool CAlert::ProcessAlert()
 {
 	return false;
-	//commenting out this code until we properly implement WDC alerts.
+	//commenting out this code until we properly implement 42 alerts.
 	/*
     if (!CheckSignature())
         return false;
@@ -2446,7 +2444,7 @@ bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
 // The message start string is designed to be unlikely to occur in normal data.
 // The characters are rarely used upper ascii, not valid as UTF-8, and produce
 // a large 4-byte int at any alignment.
-unsigned char pchMessageStart[4] = { 0xfb, 0xc0, 0xb6, 0xdb }; // Worldcoin: increase each by adding 2 to bitcoin's value.
+unsigned char pchMessageStart[4] = { 0xfb, 0xc0, 0xb6, 0xdb }; // 42: increase each by adding 2 to bitcoin's value.
 
 
 bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
@@ -3000,7 +2998,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
     }
 
 
-    else if (strCommand == "wdcalert")
+    else if (strCommand == "42alert")
     {
         CAlert alert;
         vRecv >> alert;
@@ -3534,7 +3532,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey)
                 continue;
 
             // Transaction fee required depends on block size
-            // Worldcoind: Reduce the exempted free transactions to 500 bytes (from Bitcoin's 3000 bytes)
+            // 42: Reduce the exempted free transactions to 500 bytes (from Bitcoin's 3000 bytes)
             bool fAllowFree = (nBlockSize + nTxSize < 1500 || CTransaction::AllowFree(dPriority));
             int64 nMinFee = tx.GetMinFee(nBlockSize, fAllowFree, GMF_BLOCK);
 

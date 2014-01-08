@@ -1,9 +1,9 @@
-Worldcoin - a fork of Litecoin version with fast block time and faster confirmations (2 confirmations needed instead of 6). Like Litecoin it uses scrypt as a proof of work scheme.
+42 - a fork of Litecoin version with fast block time and faster confirmations (2 confirmations needed instead of 6). Like Litecoin it uses scrypt as a proof of work scheme.
 
 	- 30 second block target
 	- Difficulty retargets every 1 hour
 	- Total coins will be around 265 million. 
-	- Each block will have 64 coins per block then decrease 1% per week (or 20,160 blocks) with a minimum reward of 1 WDC.
+	- Each block will have 64 coins per block then decrease 1% per week (or 20,160 blocks) with a minimum reward of 1 42.
 	- The default ports are 11081 (connect) and 11082 (json rpc).
 
 
@@ -20,7 +20,7 @@ or are controversial.
 
 The master branch is regularly built and tested, but is not guaranteed
 to be completely stable. Tags are regularly created to indicate new
-official, stable release versions of Worldcoin.
+official, stable release versions of 42.
 
 Feature branches are created when there are major new features being
 worked on by several people.

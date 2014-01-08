@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2012 Litecoin Developers
-// Copyright (c) 2013 Worldcoin Developers
+// Copyright (c) 2013 42 Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -27,13 +27,8 @@ namespace Checkpoints
 	// no checkpoint now, can be added in later releases
     static MapCheckpoints mapCheckpoints =
             boost::assign::map_list_of
-            (  1,    uint256("0x1a48c2bf97e0df6d4f03cd5cb0896ef43b04987048fbeb5ab2dc013335e40731"))
-            ( 39,    uint256("0x9d9a9c4c36d95f2188eb9c796deca87f8ac968e4d4ffe423d8445eea56109335"))
-            ( 74,    uint256("0xc5621f7aed66b5d34cd1dec8c9f01801ec2193acb0a80f6b3abdbcaeebe9c23f"))
-            (130,    uint256("0x7a5597740ef7b88e4cd664d8919752e1754d5fe93a1ee04f9844e3ca346475e6"))
-            (200,    uint256("0x9ebe1c0ee596d5a0552a10d6dc4ef40fad865ca3a178400ba6bcafaefa6320cb"))
-	    (749499, uint256("0xa30ea8d5be278f9d7097ffb6bb5fb9af4203f34289382adc4df11800c7e0292b"))//chain prior to a double spend attack
-	    (749526, uint256("0x27324520a2ecc22294018679426a12e9aed8b2ef09772b8523effccfae5523cc")) 
+            (  0,    uint256("0x38071cd415decbe206c9cce527b2b1f90791cf6ab4df0c0c13665931b9a6ae1d"))
+			(  65,    uint256("0x814d4d4cfa47d712a3d0e3670ef5af75581a62b6fc0dfb94e71d5f7b1572d71a"))
 			;
 
     bool CheckBlock(int nHeight, const uint256& hash)
