@@ -834,8 +834,12 @@ static const int64 nDiffChangeTarget = 600000;
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = 0.000042 * COIN;
-    if(nHeight < 419)
+	int64 nSubsidy = 0.000042 * COIN;
+	if(nHeight < 990382) // stops generation of more coins
+	{
+		nSubsidy = 0.000042 * COIN;
+	}
+	if(nHeight < 419)
     {
        nSubsidy = 0.0000001 * COIN;
 	}
@@ -859,9 +863,9 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
     {
        nSubsidy = 0.00042 * COIN;
 	}
-    if(nHeight == 4242424)
-    {
-       nSubsidy = 0.00042 * COIN;
+	if(nHeight >= 990382) // stops generation of more coins
+	{
+		nSubsidy = 0 * COIN;	
 	}
     return nSubsidy + nFees;
 }
@@ -1470,7 +1474,7 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex)
     }
 
     if (vtx[0].GetValueOut() > GetBlockValue(pindex->nHeight, nFees))
-        return false;
+        return DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(pindex->nHeight, nFees)));
 
     // Update block index on disk without changing it in memory.
     // The memory index structure will be changed after the db commits.
