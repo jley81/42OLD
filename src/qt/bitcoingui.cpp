@@ -28,6 +28,7 @@
 #include "notificator.h"
 #include "guiutil.h"
 #include "rpcconsole.h"
+#include "version.h"
 
 #ifdef Q_WS_MAC
 #include "macdockiconhandler.h"
@@ -71,7 +72,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     rpcConsole(0)
 {
     resize(850, 550);
-    setWindowTitle(tr("42") + " - " + tr("Wallet"));
+    setWindowTitle(tr("42")+" - "+tr("Wallet"));
 #ifndef Q_WS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
     setWindowIcon(QIcon(":icons/bitcoin"));
