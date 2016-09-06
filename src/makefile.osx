@@ -19,8 +19,6 @@ LIBPATHS= \
  -L"$(DEPSDIR)/lib" \
  -L"$(DEPSDIR)/lib/db48"
 
-USE_UPNP:=1
-
 LIBS= -dead_strip
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
@@ -94,16 +92,8 @@ OBJS= \
     obj/walletdb.o \
     obj/noui.o
 
-ifdef USE_UPNP
-	DEFS += -DUSE_UPNP=$(USE_UPNP)
-ifdef STATIC
-	LIBS += $(DEPSDIR)/lib/libminiupnpc.a
-else
-	LIBS += -lminiupnpc
-endif
-endif
 
-all: 42
+all: 42d
 
 # auto-generated dependencies:
 -include obj/*.P
@@ -128,7 +118,7 @@ obj/%.o: %.cpp
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-42: $(OBJS:obj/%=obj/%)
+42d: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
@@ -140,11 +130,11 @@ obj-test/%.o: test/%.cpp
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	  rm -f $(@:%.o=%.d)
 
-test_worldcoin: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+test_42: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS) $(TESTLIBS)
 
 clean:
-	-rm -f 42 test_worldcoin
+	-rm -f 42d test_42
 	-rm -f obj/*.o
 	-rm -f obj-test/*.o
 	-rm -f obj/*.P

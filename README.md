@@ -1,9 +1,22 @@
-42 - a fork of Litecoin version with fast block time and faster confirmations (2 confirmations needed instead of 6). Like Litecoin it uses scrypt as a proof of work scheme.
+[![CnSsBrn.png](https://i.imgur.com/CnSsBrn.png/)](https://tr.im/42coin)
 
-	- 42 second block target
-	- Difficulty retargets every 7 minutes
-	- Total coins will be only 42
-	- The default ports are 24242 (connect) and 4242 (json rpc).
+
+		
+Specifications
+--------------
+
+- Launch Date: January 4,2014
+- Mining Method: PoW
+- Algo Type: Scrypt
+- Total Supply: Unlimited
+- Block Time: 42 sec
+- Transaction Confirmation: 2 (instead of 6)
+- Transaction Fee: 0.00000001
+- Difficulty Retarget: 420 sec
+- Reward: block #1 - 0.42, blocks #2-419 - 0.00000010, blocks #>421 - 0.000042, suberblocks (#420, 4242, 42424, 424242, 4242424) - 0.00042
+- Premine: 0%
+- JSON-RPC Port: 4242
+- Default Listen Port: 24242
 
 
 Development process

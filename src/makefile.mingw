@@ -1,24 +1,22 @@
 # Copyright (c) 2009-2010 Satoshi Nakamoto
 # Distributed under the MIT/X11 software license, see the accompanying
-# file license.txt or http://www.opensource.org/licenses/mit-license.php.
-
-USE_UPNP:=0
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 INCLUDEPATHS= \
- -I"C:\MinGW-devel\boost_1_53_0" \
- -I"C:\MinGW-devel\db-4.8.30.NC\build_unix" \
- -I"C:\MinGW-devel\openssl-1.0.1e\include"
+ -I"C:\deps\boost_1_57_0" \
+ -I"C:\deps\db-4.8.30.NC\build_unix" \
+ -I"C:\deps\openssl-1.0.2\include"
 
 LIBPATHS= \
- -L"C:\MinGW-devel\boost_1_53_0\stage\lib" \
- -L"C:\MinGW-devel\db-4.8.30.NC\build_unix" \
- -L"C:\MinGW-devel\openssl-1.0.1e"
+ -L"C:\deps\boost_1_57_0\stage\lib" \
+ -L"C:\deps\db-4.8.30.NC\build_unix" \
+ -L"C:\deps\openssl-1.0.2"
 
 LIBS= \
- -l boost_system-mgw47-mt-s-1_53 \
- -l boost_filesystem-mgw47-mt-s-1_53 \
- -l boost_program_options-mgw47-mt-s-1_53 \
- -l boost_thread-mgw47-mt-s-1_53 \
+ -l boost_system-mgw49-mt-s-1_57 \
+ -l boost_filesystem-mgw49-mt-s-1_57 \
+ -l boost_program_options-mgw49-mt-s-1_57 \
+ -l boost_thread-mgw49-mt-s-1_57 \
  -l db_cxx \
  -l ssl \
  -l crypto
@@ -28,13 +26,6 @@ DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS) -static 
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
-
-ifdef USE_UPNP
- INCLUDEPATHS += -I"C:\MinGW-devel\miniupnpc-1.8"
- LIBPATHS += -L"C:\MinGW-devel\miniupnpc-1.8"
- LIBS += -l miniupnpc -l iphlpapi
- DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
-endif
 
 LIBS += -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l winmm -l shell32 -l comctl32 -l ole32 -l oleaut32 -l uuid -l rpcrt4 -l advapi32 -l ws2_32 -l mswsock -l shlwapi
 
@@ -68,7 +59,7 @@ OBJS= \
     obj/noui.o
 
 
-all: 42.exe
+all: 42d.exe
 
 obj/scrypt.o: scrypt.c
 	gcc -c $(CFLAGS) -o $@ $^
@@ -76,7 +67,7 @@ obj/scrypt.o: scrypt.c
 obj/%.o: %.cpp $(HEADERS)
 	g++ -c $(CFLAGS) -o $@ $<
 
-42.exe: $(OBJS:obj/%=obj/%)
+42d.exe: $(OBJS:obj/%=obj/%)
 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
@@ -84,11 +75,11 @@ TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 obj-test/%.o: test/%.cpp $(HEADERS)
 	g++ -c $(TESTDEFS) $(CFLAGS) -o $@ $<
 
-test_worldcoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+test_42.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	g++ $(CFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework $(LIBS)
 
 clean:
-	-del /Q 42 test_worldcoin
+	-del /Q 42d.exe test_42.exe
 	-del /Q obj\*
 	-del /Q obj-test\*
 	-del /Q build.h
