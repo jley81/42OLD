@@ -4,7 +4,8 @@
  * W.J. van der Laan 2011-2012
  * The Bitcoin Developers 2011-2012
  * The Litecoin Developers 2011-2013
- * The 42 Developers 2013
+ * The Worldcoin Developers 2013
+ * The 42 Developers 2014-2016
  */
 #include "bitcoingui.h"
 #include "transactiontablemodel.h"
