@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2012 Litecoin Developers
-// Copyright (c) 2013 42 Developers
+// Copyright (c) 2013-2016 42 Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -2560,7 +2560,19 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (!vRecv.empty())
             vRecv >> addrFrom >> nNonce;
         if (!vRecv.empty())
-            vRecv >> pfrom->strSubVer;
+        {
+          vRecv >> pfrom->strSubVer;
+          printf("peer connecting subver is %s",pfrom->strSubVer.c_str());
+          int iSubVer=pfrom->strSubVer.find("42");
+          if(iSubVer < 1)
+          {
+            printf("  -  disconnecting .....\n");
+            pfrom->fDisconnect = true;
+            return false;
+          }
+          printf("\n");
+        }
+
         if (!vRecv.empty())
             vRecv >> pfrom->nStartingHeight;
 
@@ -2569,7 +2581,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             pfrom->addrLocal = addrMe;
             SeenLocal(addrMe);
         }
-
         // Disconnect if we connected to ourself
         if (nNonce == nLocalHostNonce && nNonce > 1)
         {
