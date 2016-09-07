@@ -1,0 +1,108 @@
+    In Terminal:
+    ===========
+	
+01. sudo apt-get install p7zip-full autoconf automake autopoint bash bison bzip2 cmake flex gettext git g++ gperf intltool libffi-dev libtool libltdl-dev libssl-dev libxml-parser-perl make openssl patch perl pkg-config python ruby scons sed unzip wget xz-utils
+02. sudo apt-get install g++-multilib libc6-dev-i386
+03. cd /mnt
+    sudo git clone https://github.com/mxe/mxe.git
+04. sudo apt-get install libgtk2.0-dev
+05. cd /mnt/mxe
+    sudo make MXE_TARGETS="i686-w64-mingw32.static" boost
+06. sudo make MXE_TARGETS="i686-w64-mingw32.static" qt
+07. cd /mnt
+    sudo wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+	sudo tar zxvf db-4.8.30.NC.tar.gz
+08. cd /mnt/db-4.8.30.NC
+    sudo touch compile-db.sh
+	sudo chmod ugo+x compile-db.sh
+	sudo nano compile-db.sh
+	
+---------------------------------------------------------------------------------
+    Copy&Paste (Ctrl+C-Ctrl+Shift+V):
+	==========
+#!/bin/bash
+MXE_PATH=/mnt/mxe
+sed -i "s/WinIoCtl.h/winioctl.h/g" src/dbinc/win_db.h
+mkdir build_mxe
+cd build_mxe
+
+CC=$MXE_PATH/usr/bin/i686-w64-mingw32.static-gcc \
+CXX=$MXE_PATH/usr/bin/i686-w64-mingw32.static-g++ \
+../dist/configure \
+	--disable-replication \
+	--enable-mingw \
+	--enable-cxx \
+	--host x86 \
+	--prefix=$MXE_PATH/usr/i686-w64-mingw32.static
+
+make
+
+make install
+---------------------------------------------------------------------------------
+
+	Ctrl+O, Enter, Ctrl+X
+	sudo ./compile-db.sh
+09. cd /mnt
+    sudo wget http://miniupnp.free.fr/files/miniupnpc-1.6.20120509.tar.gz
+	sudo tar zxvf miniupnpc-1.6.20120509.tar.gz
+    cd /mnt/miniupnpc-1.6.20120509
+	sudo touch compile-m.sh
+	sudo chmod ugo+x compile-m.sh
+	sudo nano compile-m.sh
+	
+---------------------------------------------------------------------------------
+    Copy&Paste:
+	==========
+#!/bin/bash
+MXE_PATH=/mnt/mxe
+
+CC=$MXE_PATH/usr/bin/i686-w64-mingw32.static-gcc \
+AR=$MXE_PATH/usr/bin/i686-w64-mingw32.static-ar \
+CFLAGS="-DSTATICLIB -I$MXE_PATH/usr/i686-w64-mingw32.static/include" \
+LDFLAGS="-L$MXE_PATH/usr/i686-w64-mingw32.static/lib" \
+make libminiupnpc.a
+
+mkdir $MXE_PATH/usr/i686-w64-mingw32.static/include/miniupnpc
+cp *.h $MXE_PATH/usr/i686-w64-mingw32.static/include/miniupnpc
+cp libminiupnpc.a $MXE_PATH/usr/i686-w64-mingw32.static/lib
+---------------------------------------------------------------------------------
+
+	Ctrl+O, Enter, Ctrl+X
+	sudo ./compile-m.sh
+10. cd /mnt
+    sudo git clone https://github.com/42-coin/42oldchain
+11. cd /mnt/42
+    sudo touch compile-42.sh
+	sudo chmod ugo+x compile-42.sh
+	sudo nano compile-42.sh
+	
+---------------------------------------------------------------------------------
+    Copy&Paste:
+	==========
+#!/bin/bash
+export PATH=/mnt/mxe/usr/bin:$PATH
+MXE_INCLUDE_PATH=/mnt/mxe/usr/i686-w64-mingw32.static/include
+MXE_LIB_PATH=/mnt/mxe/usr/i686-w64-mingw32.static/lib
+
+i686-w64-mingw32.static-qmake-qt4 \
+	BOOST_LIB_SUFFIX=-mt \
+	BOOST_THREAD_LIB_SUFFIX=_win32-mt \
+	BOOST_INCLUDE_PATH=$MXE_INCLUDE_PATH/boost \
+	BOOST_LIB_PATH=$MXE_LIB_PATH \
+	OPENSSL_INCLUDE_PATH=$MXE_INCLUDE_PATH/openssl \
+	OPENSSL_LIB_PATH=$MXE_LIB_PATH \
+	BDB_INCLUDE_PATH=$MXE_INCLUDE_PATH \
+	BDB_LIB_PATH=$MXE_LIB_PATH \
+	MINIUPNPC_INCLUDE_PATH=$MXE_INCLUDE_PATH \
+	MINIUPNPC_LIB_PATH=$MXE_LIB_PATH \
+	QMAKE_LRELEASE=/mnt/mxe/usr/i686-w64-mingw32.static/qt/bin/lrelease 42-qt.pro
+
+make -f Makefile.Release
+---------------------------------------------------------------------------------
+
+	Ctrl+O, Enter, Ctrl+X
+12. sudo nautilus
+    Go to: Computer/mnt/mxe/usr/i686-w64-mingw32.static/include/pthread.h:196
+	replace "typedef uintptr_t pthread_t;" with "// typedef uintptr_t pthread_t;"
+	close directory
+13. sudo ./compile-42.sh	
